@@ -1,0 +1,184 @@
+@use './variables.scss' as *;
+
+// 引入 Inter 字体
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    // 默认暗色主题
+    background: var(--bg-primary);
+}
+
+body {
+    font-family: $font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    overflow: hidden;
+}
+
+#app {
+    height: 100vh;
+    overflow: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: opacity $transition-fast;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+// 现代滚动条
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+}
+
+html.light {
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.25);
+        }
+    }
+}
+
+// 选中文本样式
+::selection {
+    background: rgba(16, 163, 127, 0.3);
+    color: inherit;
+}
+
+// 按钮重置
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+// 输入框重置
+input,
+textarea {
+    font-family: inherit;
+    outline: none;
+}
+
+// Element Plus 主题覆盖
+.el-button--primary {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+
+    &:hover,
+    &:focus {
+        background: #0e9271 !important;
+        border-color: #0e9271 !important;
+    }
+}
+
+.el-message-box {
+    border-radius: $radius-lg !important;
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+// 通用玻璃态卡片
+.glass-card {
+    background: $glass-bg;
+    backdrop-filter: $glass-blur;
+    border: 1px solid $glass-border;
+    border-radius: $radius-lg;
+}
+
+// 渐变文字
+.gradient-text {
+    background: $primary-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+// 发光效果
+.glow {
+    box-shadow: $shadow-glow;
+}
+
+// 淡入动画
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+// 打字光标动画
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+// 脉冲动画
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
