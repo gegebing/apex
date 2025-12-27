@@ -90,14 +90,25 @@ function processSSEData(line: string, onMessage: (chunk: string) => void): void 
 
         try {
             const parsed = JSON.parse(data)
-            // 根据实际 API 响应格式提取内容
-            const content = parsed.content || parsed.choices?.[0]?.delta?.content || parsed.text || data
-            if (content) {
+
+            // 过滤掉 session_id 和其他非内容字段，只提取消息内容
+            // 支持多种可能的响应格式
+            const content = parsed.content ||
+                          parsed.choices?.[0]?.delta?.content ||
+                          parsed.choices?.[0]?.text ||
+                          parsed.text ||
+                          parsed.message ||
+                          parsed.delta?.content
+
+            // 只有当存在内容且不是 session_id 等元数据时才调用
+            if (content && typeof content === 'string' && content !== parsed.session_id) {
                 onMessage(content)
             }
         } catch {
-            // 如果不是 JSON 格式，直接使用原始数据
-            onMessage(data)
+            // 如果不是 JSON 格式，检查是否是纯文本内容
+            if (data && !data.includes('session_id')) {
+                onMessage(data)
+            }
         }
     }
 }

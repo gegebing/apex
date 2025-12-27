@@ -91,9 +91,19 @@
                   <el-icon v-if="msg.role === 'user'" :size="18"><User /></el-icon>
                   <el-icon v-else :size="18"><ChatDotRound /></el-icon>
                 </div>
-                <div class="message-body">
+                <div class="message-content">
                   <MarkdownRender :content="msg.content" />
                   <span v-if="msg.isStreaming" class="typing-cursor"></span>
+                </div>
+                <div class="message-actions">
+                  <el-icon
+                    :size="16"
+                    @click="copyMessage(msg.content)"
+                    class="copy-icon"
+                    title="复制"
+                  >
+                    <CopyDocument />
+                  </el-icon>
                 </div>
               </div>
             </div>
@@ -129,14 +139,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick, computed } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAgentStore } from '@/stores/agent'
 import { useChatStore } from '@/stores/chat'
 import MarkdownRender from '@/components/Markdown/MarkdownRender.vue'
-import { 
-  Plus, ChatDotRound, Collection, MagicStick, 
-  User, Promotion, Loading 
+import { ElMessage } from 'element-plus'
+import {
+  Plus, ChatDotRound, Collection, MagicStick,
+  User, Promotion, Loading, CopyDocument
 } from '@element-plus/icons-vue'
 
 const agentStore = useAgentStore()
@@ -191,6 +202,16 @@ function scrollToBottom() {
       messagesRef.value.scrollTop = messagesRef.value.scrollHeight
     }
   })
+}
+
+async function copyMessage(content: string) {
+  try {
+    await navigator.clipboard.writeText(content)
+    ElMessage.success('已复制到剪贴板')
+  } catch (error) {
+    console.error('复制失败:', error)
+    ElMessage.error('复制失败')
+  }
 }
 
 watch(messages, scrollToBottom, { deep: true })
@@ -388,38 +409,102 @@ watch(messages, scrollToBottom, { deep: true })
 .welcome-message,
 .message-row {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   animation: fadeIn 0.3s ease forwards;
-  
+  position: relative;
+
   .message-avatar,
   .assistant-avatar {
     width: 36px;
     height: 36px;
-    border-radius: 8px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
-  
-  .message-content,
-  .message-body {
-    flex: 1;
+
+  .message-content {
+    max-width: 70%;
+    padding: 12px 16px;
     font-size: 15px;
     line-height: 1.7;
-    color: var(--text-primary);
+    border-radius: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .message-actions {
+    position: absolute;
+    top: 100%;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+
+    .copy-icon {
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      background: var(--bg-secondary);
+
+      &:hover {
+        color: #10a37f;
+        background: rgba(16, 163, 127, 0.1);
+      }
+    }
+  }
+
+  &:hover .message-actions {
+    opacity: 1;
   }
 }
 
-.welcome-message .assistant-avatar,
-.message-row.message-assistant .message-avatar {
-  background: #10a37f;
-  color: white;
+// 智能体消息样式（左侧）
+.welcome-message,
+.message-row.message-assistant {
+  flex-direction: row;
+
+  .assistant-avatar,
+  .message-avatar {
+    background: linear-gradient(135deg, #10a37f 0%, #1a7f5a 100%);
+    color: white;
+  }
+
+  .message-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+
+  // 复制按钮在消息内容下侧的左边
+  .message-actions {
+    left: 0;
+  }
 }
 
-.message-row.message-user .message-avatar {
-  background: #5436DA;
-  color: white;
+// 用户消息样式（右侧）
+.message-row.message-user {
+  flex-direction: row-reverse;
+
+  .message-avatar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .message-content {
+    background: linear-gradient(135deg, rgba(16, 163, 127, 0.15) 0%, rgba(26, 127, 90, 0.15) 100%);
+    border: 1px solid rgba(16, 163, 127, 0.3);
+    color: var(--text-primary);
+    text-align: left;
+  }
+
+  // 复制按钮在消息内容下侧的右边
+  .message-actions {
+    right: 0;
+  }
 }
 
 .typing-cursor {

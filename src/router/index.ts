@@ -56,6 +56,24 @@ const routes: RouteRecordRaw[] = [
                 meta: { title: '工作流', icon: 'Share' }
             },
             {
+                path: 'workflows/create',
+                name: 'WorkflowCreate',
+                component: () => import('@/views/workflows/create.vue'),
+                meta: { title: '创建工作流', hidden: true }
+            },
+            {
+                path: 'workflows/:id',
+                name: 'WorkflowDetail',
+                component: () => import('@/views/workflows/detail.vue'),
+                meta: { title: '工作流详情', hidden: true }
+            },
+            {
+                path: 'workflows/:id/edit',
+                name: 'WorkflowEdit',
+                component: () => import('@/views/workflows/edit.vue'),
+                meta: { title: '编辑工作流', hidden: true }
+            },
+            {
                 path: 'dashboard',
                 name: 'Dashboard',
                 component: () => import('@/views/dashboard/index.vue'),

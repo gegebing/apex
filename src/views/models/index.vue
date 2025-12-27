@@ -103,6 +103,12 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 新增模型对话框 -->
+    <ModelCreateDialog
+      v-model="showCreateDialog"
+      @success="handleCreateSuccess"
+    />
   </div>
 </template>
 
@@ -111,9 +117,10 @@ import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useModelStore } from '@/stores/model'
 import MarkdownRender from '@/components/Markdown/MarkdownRender.vue'
-import { 
-  Plus, Cpu, VideoPlay, Operation, Picture, 
-  Connection, Star, Delete 
+import ModelCreateDialog from '@/components/Models/ModelCreateDialog.vue'
+import {
+  Plus, Cpu, VideoPlay, Operation, Picture,
+  Connection, Star, Delete
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -130,6 +137,11 @@ const currentTestModelId = ref<number>()
 onMounted(() => {
   modelStore.fetchModels({ page: 1, page_size: 50 })
 })
+
+function handleCreateSuccess() {
+  // 刷新模型列表
+  modelStore.fetchModels({ page: 1, page_size: 50 })
+}
 
 function handleTest(model: any) {
   currentTestModelId.value = model.id

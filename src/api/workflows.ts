@@ -9,11 +9,19 @@ export interface WorkflowCondition {
     target_node: string
 }
 
+// 节点位置
+export interface NodePosition {
+    x: number
+    y: number
+}
+
 // 工作流节点数据
 export interface WorkflowNodeData {
     conditions?: WorkflowCondition[]
     system_prompt?: string
     user_prompt?: string
+    output_variable?: string
+    [key: string]: any
 }
 
 // 工作流节点
@@ -21,6 +29,7 @@ export interface WorkflowNode {
     id: string
     type: 'start' | 'end' | 'llm' | 'condition' | 'tool' | 'knowledge'
     name: string
+    position: NodePosition
     data?: WorkflowNodeData
 }
 
@@ -52,6 +61,7 @@ export interface Workflow {
 export interface CreateWorkflowParams {
     name: string
     description: string
+    model_id: number
     status: string
     config: WorkflowConfig
 }

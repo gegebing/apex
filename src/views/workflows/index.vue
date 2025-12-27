@@ -115,16 +115,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useWorkflowStore } from '@/stores/workflow'
 import type { Workflow } from '@/api/workflows'
 import MarkdownRender from '@/components/Markdown/MarkdownRender.vue'
-import { 
+import {
   Plus, Share, Connection, VideoPlay, Edit, Delete,
   ChatDotRound, Setting, Document
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+const router = useRouter()
 const workflowStore = useWorkflowStore()
 const { workflows, loading } = storeToRefs(workflowStore)
 
@@ -172,15 +174,15 @@ onMounted(() => {
 })
 
 function handleCreate() {
-  ElMessage.info('工作流编辑器开发中')
+  router.push('/workflows/create')
 }
 
 function handleUseTemplate(template: any) {
-  ElMessage.info(`使用模板: ${template.name}`)
+  router.push('/workflows/create')
 }
 
 function handleEdit(workflow: Workflow) {
-  ElMessage.info('工作流编辑器开发中')
+  router.push(`/workflows/${workflow.id}/edit`)
 }
 
 function handleExecute(workflow: Workflow) {

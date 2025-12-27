@@ -48,7 +48,12 @@ export const useChatStore = defineStore('chat', () => {
     }
 
     async function sendMessage(content: string) {
-        if (!content.trim() || isStreaming.value) return
+        if (!content.trim() || isStreaming.value || !currentAgentId.value) {
+            if (!currentAgentId.value) {
+                console.error('未设置智能体 ID')
+            }
+            return
+        }
 
         // 添加用户消息
         addMessage('user', content)
@@ -61,7 +66,7 @@ export const useChatStore = defineStore('chat', () => {
         addMessage('assistant', '', true)
 
         try {
-            await chatApi.streamChat(content, sessionId.value, {
+            await chatApi.streamChat(currentAgentId.value, content, sessionId.value, {
                 onMessage: (chunk) => {
                     assistantContent += chunk
                     updateLastAssistantMessage(assistantContent, true)
@@ -84,12 +89,13 @@ export const useChatStore = defineStore('chat', () => {
 
     async function loadHistory(agentId: number) {
         try {
-            const data = await chatApi.getConversations(agentId, sessionId.value) as any
-            messages.value = (data || []).map((msg: ChatMessage) => ({
-                id: generateMessageId(),
+            const response = await chatApi.getConversations(agentId, sessionId.value) as any
+            const data = response?.data || []
+            messages.value = data.map((msg: any) => ({
+                id: `msg-${msg.id}`,
                 role: msg.role,
                 content: msg.content,
-                timestamp: msg.timestamp || Date.now(),
+                timestamp: new Date(msg.created_at).getTime(),
                 isStreaming: false
             }))
         } catch (error) {

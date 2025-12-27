@@ -28,6 +28,7 @@ export interface AgentListParams {
 export interface CreateAgentParams {
     name: string
     description: string
+    model_id: number
     model_provider: string
     model_name: string
     temperature: number
